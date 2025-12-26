@@ -1,49 +1,67 @@
 async function audit() {
-            const file = document.getElementById('f').files[0];
-            if(!file) return alert("Select a PDF!");
+    const file = document.getElementById('f').files[0];
+    if(!file) return alert("Select a PDF!");
 
-            document.getElementById('L').classList.remove('hidden');
-            document.getElementById('R').classList.add('hidden');
+    document.getElementById('L').classList.remove('hidden');
+    document.getElementById('R').classList.add('hidden');
 
-            try {
-                const ab = await file.arrayBuffer();
-                const pdf = await pdfjsLib.getDocument(ab).promise;
-                let t = "";
-                for (let i = 1; i <= pdf.numPages; i++) {
-                    const page = await pdf.getPage(i);
-                    const content = await page.getTextContent();
-                    t += content.items.map(s => s.str).join(" ");
-                }
-
-                const k = "AIzaSyCfMGe_T6wFyf9MP-gKIjc02uOyE3YAA6Y";
-                // We use gemini-1.5-flash-latest for better stability
-                const api = `https://corsproxy.io/?${encodeURIComponent("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=" + k)}`;
-
-                const res = await fetch(api, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ contents: [{ parts: [{ text: "Audit this SA contract for POPIA/BCEA risks: " + t }] }] })
-                });
-
-                const d = await res.json();
-                
-                // --- NEW SAFETY CHECK ---
-                if (d.error) {
-                    throw new Error("Google API Error: " + d.error.message);
-                }
-
-                if (!d.candidates || d.candidates.length === 0) {
-                    throw new Error("No response from AI. It might be blocked by safety filters.");
-                }
-
-                const output = d.candidates[0].content.parts[0].text;
-                document.getElementById('R').innerText = output;
-                document.getElementById('R').classList.remove('hidden');
-
-            } catch (e) {
-                // This will tell us EXACTLY what is wrong
-                alert("DEBUG INFO: " + e.message);
-                console.error(e);
-            }
-            document.getElementById('L').classList.add('hidden');
+    try {
+        console.log("Starting PDF Parse...");
+        const ab = await file.arrayBuffer();
+        const pdf = await pdfjsLib.getDocument(ab).promise;
+        let t = "";
+        for (let i = 1; i <= pdf.numPages; i++) {
+            const page = await pdf.getPage(i);
+            const content = await page.getTextContent();
+            t += content.items.map(s => s.str).join(" ");
         }
+        
+        console.log("Text Extracted. Length:", t.length);
+
+        const k = "AIzaSyCfMGe_T6wFyf9MP-gKIjc02uOyE3YAA6Y";
+        // Using the most stable endpoint
+        const api = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${k}`;
+        const proxy = "https://corsproxy.io/?";
+
+        const res = await fetch(proxy + encodeURIComponent(api), {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                contents: [{ parts: [{ text: "Act as a South African Legal Expert. Audit this contract for POPIA and BCEA risks. Be detailed. Text: " + t }] }],
+                // This part tells the AI not to block the response for legal text
+                safetySettings: [
+                    { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
+                    { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
+                    { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
+                    { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }
+                ]
+            })
+        });
+
+        const d = await res.json();
+
+        if (d.error) {
+            throw new Error(`Google says: ${d.error.message} (Status: ${d.error.status})`);
+        }
+
+        // Check if the AI was blocked by safety despite our settings
+        if (d.candidates && d.candidates[0].finishReason === "SAFETY") {
+            throw new Error("The AI refused to analyze this specific document for safety/privacy reasons.");
+        }
+
+        if (!d.candidates || !d.candidates[0].content) {
+            throw new Error("AI responded but the report was empty. Try a shorter contract.");
+        }
+
+        const output = d.candidates[0].content.parts[0].text;
+        document.getElementById('R').innerText = output;
+        document.getElementById('R').classList.remove('hidden');
+        console.log("Audit Successful!");
+
+    } catch (e) {
+        alert("🚨 AUDIT FAILED\n\nReason: " + e.message);
+        console.error("Full Error:", e);
+    } finally {
+        document.getElementById('L').classList.add('hidden');
+    }
+}
