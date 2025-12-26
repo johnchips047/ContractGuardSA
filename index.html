@@ -3,14 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contract Guard SA | 2.5 Thinking Engine</title>
+    <title>Contract Guard SA | 2.5 thinking Engine</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
         body { font-family: 'Inter', sans-serif; }
-        .thinking-glow { box-shadow: 0 0 15px rgba(34, 197, 94, 0.4); }
     </style>
 </head>
 <body class="bg-slate-950 text-slate-200 min-h-screen">
@@ -18,47 +17,48 @@
     <nav class="border-b border-slate-800 bg-slate-900/50 p-4 sticky top-0 z-50 backdrop-blur-md">
         <div class="max-w-3xl mx-auto flex justify-between items-center">
             <span class="font-black text-white tracking-tighter text-xl uppercase">Contract Guard <span class="text-green-500">SA</span></span>
-            <span class="text-[10px] font-bold bg-green-500/10 text-green-500 px-3 py-1 rounded-full border border-green-500/20 uppercase tracking-widest">Powered by Gemini 2.5</span>
+            <span class="text-[10px] font-bold bg-green-500/10 text-green-500 px-3 py-1 rounded-full border border-green-500/20 uppercase">Gemini 2.5 Active</span>
         </div>
     </nav>
 
     <main class="max-w-2xl mx-auto py-12 px-6">
-        <div class="bg-slate-900 border border-slate-800 p-8 rounded-3xl shadow-2xl thinking-glow">
+        <div class="bg-slate-900 border border-slate-800 p-8 rounded-3xl shadow-2xl">
             <div class="space-y-6">
                 <div>
                     <label class="block text-xs font-bold uppercase text-slate-500 mb-2 ml-1">Secure Access Code</label>
                     <input type="text" id="accessCode" placeholder="TRIAL-2025" class="w-full bg-slate-950 border border-slate-800 p-4 rounded-xl text-green-400 outline-none focus:border-green-500 transition-all font-mono uppercase">
                 </div>
                 
-                <div class="bg-slate-950 p-8 border-2 border-dashed border-slate-800 rounded-2xl text-center relative group hover:border-green-500/50 transition-colors">
+                <div class="bg-slate-950 p-8 border-2 border-dashed border-slate-800 rounded-2xl text-center relative group">
                     <input type="file" id="f" accept="application/pdf" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
-                    <div class="text-slate-500 group-hover:text-slate-300">
+                    <div class="text-slate-500">
                         <span class="text-3xl block mb-2">📄</span>
-                        <p class="text-sm font-bold" id="fn">Drag & Drop SA Contract PDF</p>
-                        <p class="text-[10px] mt-1 text-slate-600 uppercase">POPIA / BCEA / CIPC Audit Ready</p>
+                        <p class="text-sm font-bold" id="fn">Click to upload Contract</p>
                     </div>
                 </div>
 
-                <button onclick="audit()" class="w-full bg-green-600 hover:bg-green-500 text-slate-950 font-black py-4 rounded-xl transition-all uppercase tracking-tight text-lg shadow-lg">Start 2.5 Audit</button>
+                <button onclick="audit()" class="w-full bg-green-600 hover:bg-green-500 text-slate-950 font-black py-4 rounded-xl transition-all uppercase text-lg">Start Audit</button>
             </div>
         </div>
 
         <div id="L" class="hidden mt-10 text-center">
             <div class="inline-block animate-spin rounded-full h-10 w-10 border-4 border-green-500 border-t-transparent mb-4"></div>
-            <p class="text-green-500 font-black tracking-widest text-xs animate-pulse">2.5 ENGINE IS THINKING...</p>
+            <p class="text-green-500 font-black tracking-widest text-xs">2.5 ENGINE IS THINKING...</p>
         </div>
 
         <div id="R" class="hidden mt-10 bg-white text-slate-900 p-10 rounded-3xl shadow-2xl relative">
-            <div class="absolute top-0 left-0 w-full h-2 bg-green-500 rounded-t-3xl"></div>
-            <div id="printArea">
-                <div class="flex justify-between items-start mb-6 border-b pb-4">
-                    <h2 class="text-2xl font-black uppercase tracking-tighter">Legal Audit Results</h2>
-                    <span class="text-[10px] font-bold bg-slate-100 px-2 py-1 rounded text-slate-500 uppercase">South Africa 2025</span>
+            <div id="printArea" class="bg-white p-2">
+                <div class="flex justify-between items-start mb-6 border-b border-slate-200 pb-4">
+                    <div>
+                        <h2 class="text-2xl font-black uppercase tracking-tighter">Legal Compliance Audit</h2>
+                        <p class="text-[10px] text-slate-500 font-bold uppercase mt-1">Generated by Contract Guard SA • Gemini 2.5 Engine</p>
+                    </div>
                 </div>
                 <div id="box" class="text-sm leading-relaxed whitespace-pre-wrap font-medium text-slate-800"></div>
             </div>
-            <button onclick="save()" class="mt-8 w-full bg-slate-900 text-white py-4 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-black transition-all">
-                📥 DOWNLOAD OFFICIAL REPORT
+            
+            <button id="dlBtn" onclick="save()" class="mt-8 w-full bg-slate-900 text-white py-4 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-black transition-all">
+                📥 DOWNLOAD REPORT (PDF)
             </button>
         </div>
     </main>
@@ -70,8 +70,8 @@
         async function audit() {
             const code = document.getElementById('accessCode').value.trim().toUpperCase();
             const file = document.getElementById('f').files[0];
-            if(code !== "TRIAL-2025") return alert("INVALID ACCESS CODE");
-            if(!file) return alert("SELECT PDF FIRST");
+            if(code !== "TRIAL-2025") return alert("INVALID CODE");
+            if(!file) return alert("SELECT PDF");
 
             const loader = document.getElementById('L');
             const result = document.getElementById('R');
@@ -88,7 +88,6 @@
                     t += content.items.map(s => s.str).join(" ");
                 }
 
-                // API Key & Model Lock
                 const k = "AIzaSyDl8odPlnBUilaiYqb2hkZjNSvNbB1mXGU";
                 const api = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${k}`;
                 const proxy = "https://corsproxy.io/?";
@@ -97,46 +96,55 @@
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        contents: [{ parts: [{ text: "Act as a South African Compliance Officer. Audit this contract for POPIA (data privacy), BCEA (labour), and CIPC (governance) risks. Use clear bullet points for 'Red Flags': " + t }] }],
-                        generationConfig: {
-                            temperature: 0.2,
-                            topP: 0.8,
-                            topK: 40
-                        },
-                        safetySettings: [
-                            { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
-                            { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
-                            { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
-                            { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }
-                        ]
+                        contents: [{ parts: [{ text: "Act as a South African Legal Expert. Audit this contract for POPIA and BCEA risks. List them in detailed bullet points: " + t }] }],
+                        safetySettings: [{ category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" }]
                     })
                 });
 
                 const d = await res.json();
-
-                if (d.error) {
-                    throw new Error(`[Gemini 2.5 Error]: ${d.error.message}`);
-                }
-
                 if (d.candidates && d.candidates[0].content) {
-                    document.getElementById('box').innerText = d.candidates[0].content.parts[0].text;
+                    const reportText = d.candidates[0].content.parts[0].text;
+                    document.getElementById('box').innerText = reportText;
                     result.classList.remove('hidden');
-                    result.scrollIntoView({ behavior: 'smooth' });
-                } else {
-                    throw new Error("Analysis Refused by 2.5 Filters.");
+                    
+                    // Small delay to ensure the browser has actually painted the text
+                    setTimeout(() => {
+                        result.scrollIntoView({ behavior: 'smooth' });
+                    }, 100);
                 }
-
             } catch (err) {
-                alert("🚨 SYSTEM ERROR\n\n" + err.message);
+                alert("ERROR: " + err.message);
             } finally {
                 loader.classList.add('hidden');
             }
         }
 
+        // --- IMPROVED SAVE FUNCTION ---
         function save() { 
             const element = document.getElementById('printArea');
-            const opt = { margin: 1, filename: 'Audit_Compliance_Report.pdf', jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' } };
-            html2pdf().set(opt).from(element).save(); 
+            const btn = document.getElementById('dlBtn');
+            
+            // UI feedback
+            btn.innerText = "Generating PDF...";
+            btn.disabled = true;
+
+            const opt = {
+                margin: [0.5, 0.5],
+                filename: 'SA_Contract_Audit.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { 
+                    scale: 2, // Higher scale = better quality
+                    useCORS: true,
+                    letterRendering: true
+                },
+                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+            };
+
+            // Promise-based save to handle large text rendering
+            html2pdf().set(opt).from(element).save().then(() => {
+                btn.innerText = "📥 DOWNLOAD REPORT (PDF)";
+                btn.disabled = false;
+            });
         }
     </script>
 </body>
