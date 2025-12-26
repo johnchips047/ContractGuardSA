@@ -18,40 +18,83 @@
     <section id="hero" class="min-h-screen hero-gradient flex flex-col justify-center items-center px-6 text-center">
         <div class="max-w-4xl">
             <span class="text-green-500 font-bold tracking-[0.2em] uppercase text-sm mb-4 block">South Africa's #1 AI Compliance Tool</span>
-            <h1 class="text-5xl md:text-7xl font-black text-white leading-tight mb-6">Protect your business from <span class="text-green-500 italic">legal blindspots.</span></h1>
+            <h1 class="text-5xl md:text-7xl font-black text-white leading-tight mb-6">Automate your <span class="text-green-500 italic">Legal Audits.</span></h1>
             <p class="text-slate-400 text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed">
-                Automated POPIA and BCEA audits for South African SMEs. Upload any contract and get a professional risk assessment in seconds.
+                Professional POPIA and BCEA risk assessments for South African SMEs. Secure, fast, and 2025-compliant.
             </p>
             <div class="flex flex-col md:flex-row gap-4 justify-center">
-                <button onclick="document.getElementById('audit-lab').scrollIntoView()" class="bg-green-600 hover:bg-green-500 text-slate-950 font-black px-10 py-5 rounded-2xl text-xl transition-all shadow-2xl shadow-green-900/20">
-                    GET STARTED NOW
+                <button onclick="document.getElementById('pricing').scrollIntoView()" class="bg-green-600 hover:bg-green-500 text-slate-950 font-black px-10 py-5 rounded-2xl text-xl transition-all shadow-2xl">
+                    VIEW PRICING
                 </button>
-                <div class="flex items-center gap-4 px-6 py-4 border border-slate-700 rounded-2xl bg-slate-900/50">
-                    <span class="text-green-500 font-bold">✓ 2025 Regulations</span>
-                    <span class="text-slate-600">|</span>
-                    <span class="text-green-500 font-bold">✓ POPIA Ready</span>
+                <button onclick="document.getElementById('audit-lab').scrollIntoView()" class="px-10 py-5 rounded-2xl border border-slate-700 bg-slate-900/50 hover:bg-slate-800 transition-all font-bold">
+                    TRY FREE AUDIT
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <section id="pricing" class="py-24 bg-slate-900/30">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-black text-white uppercase italic">Choose Your Protection</h2>
+                <p class="text-slate-500 mt-2">Flexible plans for SA businesses of all sizes.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-slate-900 border border-slate-800 p-8 rounded-3xl hover:border-green-500/50 transition-all">
+                    <h3 class="text-xl font-bold text-white mb-2">Starter</h3>
+                    <div class="text-4xl font-black text-green-500 mb-6">R450<span class="text-sm text-slate-500 font-normal"> /month</span></div>
+                    <ul class="space-y-4 mb-10 text-slate-400 text-sm">
+                        <li>✓ 5 Contract Audits</li>
+                        <li>✓ POPIA Red Flagging</li>
+                        <li>✓ Basic PDF Reports</li>
+                        <li>✓ 24-Hour AI Access</li>
+                    </ul>
+                    <button onclick="document.getElementById('audit-lab').scrollIntoView()" class="w-full py-3 rounded-xl border border-slate-700 font-bold hover:bg-slate-800 transition-all">Get Started</button>
+                </div>
+
+                <div class="bg-slate-900 border-2 border-green-500 p-8 rounded-3xl scale-105 shadow-2xl relative">
+                    <span class="absolute -top-4 left-1/2 -translate-x-1/2 bg-green-500 text-slate-950 text-[10px] font-black px-4 py-1 rounded-full">MOST POPULAR</span>
+                    <h3 class="text-xl font-bold text-white mb-2">Business</h3>
+                    <div class="text-4xl font-black text-green-500 mb-6">R1,250<span class="text-sm text-slate-500 font-normal"> /month</span></div>
+                    <ul class="space-y-4 mb-10 text-slate-400 text-sm">
+                        <li>✓ Unlimited Audits</li>
+                        <li>✓ BCEA & Labour Analysis</li>
+                        <li>✓ Professional PDF Export</li>
+                        <li>✓ Risk Score Technology</li>
+                    </ul>
+                    <button onclick="document.getElementById('audit-lab').scrollIntoView()" class="w-full py-3 rounded-xl bg-green-600 text-slate-950 font-black hover:bg-green-500 transition-all">Select Plan</button>
+                </div>
+
+                <div class="bg-slate-900 border border-slate-800 p-8 rounded-3xl hover:border-green-500/50 transition-all">
+                    <h3 class="text-xl font-bold text-white mb-2">Enterprise</h3>
+                    <div class="text-4xl font-black text-green-500 mb-6">R4,500<span class="text-sm text-slate-500 font-normal"> /month</span></div>
+                    <ul class="space-y-4 mb-10 text-slate-400 text-sm">
+                        <li>✓ Custom Legal Prompts</li>
+                        <li>✓ API Integration Access</li>
+                        <li>✓ Multi-User Dashboard</li>
+                        <li>✓ Priority Legal Support</li>
+                    </ul>
+                    <button onclick="document.getElementById('audit-lab').scrollIntoView()" class="w-full py-3 rounded-xl border border-slate-700 font-bold hover:bg-slate-800 transition-all">Contact Sales</button>
                 </div>
             </div>
         </div>
     </section>
 
-    <section id="audit-lab" class="min-h-screen py-24 bg-slate-950 border-t border-slate-900">
+    <section id="audit-lab" class="py-24 bg-slate-950">
         <div class="max-w-2xl mx-auto px-6">
-            <div class="text-center mb-12">
-                <h2 class="text-3xl font-black text-white uppercase tracking-tighter">The Audit Lab</h2>
-                <p class="text-slate-500 mt-2">Enter your code and upload your document below.</p>
-            </div>
-
-            <div class="bg-slate-900 border border-slate-800 p-8 rounded-3xl shadow-2xl mb-10">
+            <div class="bg-slate-900 border border-slate-800 p-8 rounded-3xl shadow-2xl">
+                <div class="mb-8 border-b border-slate-800 pb-4">
+                    <h2 class="text-xl font-black text-white uppercase tracking-tighter">Secure Upload Portal</h2>
+                    <p class="text-xs text-slate-500 uppercase font-bold tracking-widest mt-1">Authorized trial mode</p>
+                </div>
+                
                 <div class="space-y-6">
-                    <div>
-                        <label class="block text-xs font-bold uppercase text-slate-500 mb-2 ml-1">Secure Access Code</label>
-                        <input type="text" id="accessCode" value="TRIAL-2025" class="w-full bg-slate-950 border border-slate-800 p-4 rounded-xl text-green-400 outline-none focus:border-green-500 transition-all font-mono">
-                    </div>
+                    <input type="text" id="accessCode" value="TRIAL-2025" class="w-full bg-slate-950 border border-slate-800 p-4 rounded-xl text-green-400 outline-none focus:border-green-500 font-mono">
                     
                     <div class="bg-slate-950 p-8 border-2 border-dashed border-slate-800 rounded-2xl text-center relative group">
                         <input type="file" id="f" accept="application/pdf" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
-                        <div id="fn" class="text-slate-500 text-sm font-bold uppercase">📄 Drag or Click to upload PDF</div>
+                        <div id="fn" class="text-slate-500 text-sm font-bold uppercase">📄 Drop Contract Here</div>
                     </div>
 
                     <button onclick="audit()" class="w-full bg-green-600 hover:bg-green-500 text-slate-950 font-black py-4 rounded-xl transition-all uppercase text-lg">Analyze Compliance</button>
@@ -60,17 +103,17 @@
 
             <div id="L" class="hidden text-center py-10">
                 <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-green-500 border-t-transparent mb-4"></div>
-                <p class="text-green-500 font-black tracking-widest text-xs uppercase">Engine Processing Data...</p>
+                <p class="text-green-500 font-black tracking-widest text-xs uppercase animate-pulse">Running Legal Verification Engine...</p>
             </div>
 
-            <div id="R" class="hidden bg-white text-slate-900 p-10 rounded-3xl shadow-2xl border-t-8 border-green-500">
+            <div id="R" class="hidden bg-white text-slate-900 p-10 rounded-3xl shadow-2xl border-t-8 border-green-500 mt-12">
                 <div id="printArea">
                     <div class="flex justify-between items-start mb-6 border-b pb-4">
                         <div>
                             <h2 class="text-2xl font-black uppercase tracking-tighter">Compliance Audit Report</h2>
-                            <p class="text-[10px] text-slate-400 font-bold uppercase">Generated by Compliance Guard SA</p>
+                            <p class="text-[10px] text-slate-400 font-bold uppercase">Compliance Guard SA Official</p>
                         </div>
-                        <div id="riskDisplay" class="bg-red-100 text-red-600 px-4 py-2 rounded-xl font-black text-center">
+                        <div class="bg-red-100 text-red-600 px-4 py-2 rounded-xl font-black text-center">
                             <span class="block text-[8px] uppercase">Risk Level</span>
                             <span id="riskScore">CALCULATING...</span>
                         </div>
@@ -78,16 +121,15 @@
                     <div id="box" class="text-sm leading-relaxed whitespace-pre-wrap font-medium text-slate-800"></div>
                 </div>
                 
-                <button id="dlBtn" onclick="save()" class="mt-8 w-full bg-slate-950 text-white py-4 rounded-xl font-bold flex items-center justify-center gap-2">
+                <button id="dlBtn" onclick="save()" class="mt-8 w-full bg-slate-950 text-white py-4 rounded-xl font-bold hover:bg-black transition-all">
                     📥 DOWNLOAD OFFICIAL PDF
                 </button>
             </div>
         </div>
     </section>
 
-    <footer class="py-12 border-t border-slate-900 text-center text-slate-600 text-xs">
-        <p>© 2025 Compliance Guard SA. All Rights Reserved.</p>
-        <p class="mt-2 max-w-md mx-auto px-6 opacity-50">Not a substitute for professional legal advice. Powered by Proprietary AI Engine.</p>
+    <footer class="py-12 border-t border-slate-900 text-center text-slate-600 text-[10px] uppercase tracking-widest">
+        <p>© 2025 Compliance Guard SA. Built for South African Enterprise.</p>
     </footer>
 
     <script>
@@ -95,7 +137,7 @@
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
         
         document.getElementById('f').onchange = e => {
-            document.getElementById('fn').innerText = "SELECTED: " + e.target.files[0].name;
+            document.getElementById('fn').innerText = "READY: " + e.target.files[0].name;
             document.getElementById('fn').classList.add('text-green-500');
         };
 
@@ -103,7 +145,7 @@
             const code = document.getElementById('accessCode').value.trim().toUpperCase();
             const file = document.getElementById('f').files[0];
             if(code !== "TRIAL-2025") return alert("INVALID ACCESS CODE");
-            if(!file) return alert("UPLOAD PDF FIRST");
+            if(!file) return alert("SELECT PDF FIRST");
 
             const loader = document.getElementById('L');
             const result = document.getElementById('R');
@@ -127,19 +169,15 @@
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        contents: [{ parts: [{ text: "Act as a South African Compliance Lawyer. Review the following text for POPIA and labor law risks. First, provide a 'Risk Percentage' (0-100%) and a 'Risk Level' (Low/Medium/High). Then, provide a detailed audit with bulleted 'Red Flags'. Text: " + contractText }] }]
+                        contents: [{ parts: [{ text: "Act as a South African Compliance Lawyer. Review the following text for POPIA and labor law risks. First, provide a 'Risk Percentage' (0-100%) and a 'Risk Level'. Then, provide a detailed audit with bulleted 'Red Flags'. Text: " + contractText }] }]
                     })
                 });
 
                 const data = await response.json();
                 if (data.candidates && data.candidates[0].content) {
                     const aiReport = data.candidates[0].content.parts[0].text;
-                    
-                    // Simple extraction of risk score for display
                     const scoreMatch = aiReport.match(/(\d+)%/);
-                    const scoreText = scoreMatch ? scoreMatch[0] : "HIGH";
-                    document.getElementById('riskScore').innerText = scoreText;
-                    
+                    document.getElementById('riskScore').innerText = scoreMatch ? scoreMatch[0] : "HIGH";
                     document.getElementById('box').innerText = aiReport;
                     result.classList.remove('hidden');
                     result.scrollIntoView({ behavior: 'smooth' });
@@ -157,8 +195,7 @@
                 const reportContent = document.getElementById('box').innerText;
                 const score = document.getElementById('riskScore').innerText;
 
-                // 1. BRAND HEADER
-                doc.setFillColor(2, 6, 23); // Dark Slate
+                doc.setFillColor(2, 6, 23);
                 doc.rect(0, 0, 210, 40, 'F');
                 
                 doc.setFont("helvetica", "bold");
@@ -167,10 +204,9 @@
                 doc.text("COMPLIANCE GUARD SA", 20, 20);
 
                 doc.setFontSize(10);
-                doc.setTextColor(34, 197, 94); // Green
+                doc.setTextColor(34, 197, 94);
                 doc.text("OFFICIAL RISK AUDIT REPORT • 2025 REGULATORY UPDATE", 20, 28);
 
-                // 2. RISK SCORE BOX
                 doc.setFillColor(241, 245, 249);
                 doc.roundedRect(140, 12, 50, 20, 3, 3, 'F');
                 doc.setTextColor(0, 0, 0);
@@ -179,7 +215,6 @@
                 doc.setFontSize(14);
                 doc.text(score, 145, 26);
 
-                // 3. CONTENT
                 doc.setTextColor(0);
                 doc.setFontSize(11);
                 doc.setFont("helvetica", "normal");
@@ -196,14 +231,13 @@
                     cursorY += 6;
                 });
 
-                // 4. PROFESSIONAL DISCLAIMER (FOOTER)
                 const footerY = 285;
                 doc.setFontSize(7);
                 doc.setTextColor(150);
                 const disclaimer = "DISCLAIMER: This report is generated by AI and does not constitute legal advice. Compliance Guard SA accepts no liability for actions taken based on this report. Users should consult a registered legal practitioner for South African law matters.";
                 doc.text(doc.splitTextToSize(disclaimer, 170), 20, footerY);
 
-                doc.save('Official_Compliance_Audit.pdf');
+                doc.save('Compliance_Audit_Report.pdf');
             } catch (pdfErr) {
                 alert("PDF Error: " + pdfErr.message);
             }
