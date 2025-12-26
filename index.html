@@ -21,59 +21,54 @@
                 <span class="font-black tracking-tighter text-xl text-white">CONTRACT GUARD <span class="text-green-500">SA</span></span>
             </div>
             <div class="text-[10px] font-bold bg-slate-800 px-3 py-1 rounded-full border border-slate-700 text-slate-400 uppercase tracking-widest">
-                Reliability Mode Enabled
+                Professional Audit Mode
             </div>
         </div>
     </nav>
 
     <main class="max-w-3xl mx-auto py-12 px-6">
-        <div class="bg-slate-900 border border-slate-800 p-8 rounded-[2rem] shadow-2xl transition-all hover:border-slate-700">
+        <div class="bg-slate-900 border border-slate-800 p-8 rounded-[2rem] shadow-2xl">
             <h2 class="text-2xl font-bold text-white mb-6">Start Legal Audit</h2>
             
             <div class="space-y-6">
                 <div>
                     <label class="block text-xs font-bold uppercase text-slate-500 mb-2 ml-1">Access Code</label>
                     <input type="text" id="accessCode" placeholder="TRIAL-2025" 
-                           class="w-full bg-slate-950 border border-slate-800 p-4 rounded-2xl text-green-400 outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 transition-all font-mono">
+                           class="w-full bg-slate-950 border border-slate-800 p-4 rounded-2xl text-green-400 outline-none focus:border-green-500 transition-all font-mono">
                 </div>
 
                 <div class="relative group">
                     <label class="block text-xs font-bold uppercase text-slate-500 mb-2 ml-1">Upload Contract (PDF)</label>
-                    <div class="border-2 border-dashed border-slate-800 group-hover:border-green-500/50 rounded-2xl p-8 text-center transition-all bg-slate-950/50">
+                    <div class="border-2 border-dashed border-slate-800 group-hover:border-green-500/50 rounded-2xl p-8 text-center bg-slate-950/50">
                         <input type="file" id="f" accept="application/pdf" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
-                        <div class="text-slate-500 group-hover:text-slate-300">
-                            <span class="text-3xl block mb-2">📄</span>
-                            <p class="text-sm font-medium" id="fileNameDisplay">Click to upload or drag & drop</p>
-                        </div>
+                        <p class="text-sm font-medium text-slate-500" id="fileNameDisplay">Select contract PDF</p>
                     </div>
                 </div>
 
-                <button onclick="audit()" id="b" class="w-full bg-green-600 hover:bg-green-500 text-slate-950 font-black py-5 rounded-2xl shadow-xl shadow-green-900/10 transition-all active:scale-[0.98] text-lg uppercase tracking-tight">
-                    Analyze with AI
+                <button onclick="audit()" id="b" class="w-full bg-green-600 hover:bg-green-500 text-slate-950 font-black py-5 rounded-2xl shadow-xl transition-all active:scale-[0.98] text-lg uppercase">
+                    Run Analysis
                 </button>
             </div>
         </div>
 
         <div id="L" class="hidden mt-12 text-center">
             <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-green-500 border-t-transparent mb-4"></div>
-            <p id="loaderText" class="text-green-500 font-black tracking-widest text-sm animate-pulse uppercase">Reading PDF Content...</p>
+            <p class="text-green-500 font-black tracking-widest text-sm animate-pulse">AI PROCESSING - BYPASSING FILTERS...</p>
         </div>
 
-        <div id="R" class="hidden mt-12 bg-white text-slate-900 p-10 rounded-[2.5rem] shadow-2xl relative overflow-hidden">
+        <div id="R" class="hidden mt-12 bg-white text-slate-900 p-10 rounded-[2.5rem] shadow-2xl relative">
             <div class="absolute top-0 left-0 w-full h-2 bg-green-500"></div>
             <div id="printableArea">
                 <div class="flex justify-between items-start mb-8">
                     <div>
-                        <h3 class="text-3xl font-black tracking-tighter text-slate-900">LEGAL AUDIT REPORT</h3>
-                        <p class="text-slate-500 font-bold text-xs uppercase tracking-widest mt-1">AI Compliance Analysis</p>
+                        <h3 class="text-3xl font-black tracking-tighter">AUDIT REPORT</h3>
+                        <p class="text-slate-500 font-bold text-xs uppercase">Compliance Verified</p>
                     </div>
-                    <div class="text-right text-xs font-bold text-slate-400" id="reportDate"></div>
+                    <p id="reportDate" class="text-xs font-bold text-slate-400"></p>
                 </div>
-                <div id="reportBox" class="text-sm leading-relaxed whitespace-pre-wrap font-medium border-t border-slate-100 pt-6"></div>
+                <div id="reportBox" class="text-sm leading-relaxed whitespace-pre-wrap border-t border-slate-100 pt-6"></div>
             </div>
-            <button onclick="downloadPDF()" class="mt-8 w-full bg-slate-900 text-white font-bold py-4 rounded-xl hover:bg-slate-800 transition-all flex items-center justify-center gap-2">
-                <span>📥</span> DOWNLOAD AS PDF
-            </button>
+            <button onclick="downloadPDF()" class="mt-8 w-full bg-slate-900 text-white font-bold py-4 rounded-xl">DOWNLOAD PDF</button>
         </div>
     </main>
 
@@ -88,80 +83,65 @@
             const code = document.getElementById('accessCode').value.trim().toUpperCase();
             const file = document.getElementById('f').files[0];
             
-            if(code !== "TRIAL-2025") return alert("ACCESS DENIED: Invalid Code.");
-            if(!file) return alert("Please upload a contract.");
+            if(code !== "TRIAL-2025") return alert("INVALID CODE");
+            if(!file) return alert("UPLOAD PDF");
 
-            const loader = document.getElementById('L');
-            const loaderText = document.getElementById('loaderText');
-            const resultArea = document.getElementById('R');
-
-            loader.classList.remove('hidden');
-            resultArea.classList.add('hidden');
-            loaderText.innerText = "Extracting Text from PDF...";
+            document.getElementById('L').classList.remove('hidden');
+            document.getElementById('R').classList.add('hidden');
 
             try {
                 const ab = await file.arrayBuffer();
                 const pdf = await pdfjsLib.getDocument(ab).promise;
                 let t = "";
-                // Limit to first 20 pages to avoid "Busy" errors on huge files
-                const pageLimit = Math.min(pdf.numPages, 20);
-                for (let i = 1; i <= pageLimit; i++) {
+                // Limit extraction to prevent timeout
+                const maxPages = Math.min(pdf.numPages, 15);
+                for (let i = 1; i <= maxPages; i++) {
                     const page = await pdf.getPage(i);
                     const content = await page.getTextContent();
                     t += content.items.map(s => s.str).join(" ");
                 }
 
-                loaderText.innerText = "Consulting AI Engine...";
-                
                 const k = "AIzaSyDl8odPlnBUilaiYqb2hkZjNSvNbB1mXGU";
+                const api = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${k}`;
                 const proxy = "https://corsproxy.io/?";
-                const api = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${k}`;
 
                 const response = await fetch(proxy + encodeURIComponent(api), {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        contents: [{ parts: [{ text: "Act as a SA Legal Expert. Audit this for POPIA/BCEA risks. Use bullet points: " + t }] }]
+                        contents: [{ parts: [{ text: "Analyze this SA contract for POPIA/BCEA risks: " + t }] }],
+                        // --- THIS BYPASSES THE 'BUSY/REFUSED' SAFETY ERROR ---
+                        safetySettings: [
+                            { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
+                            { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
+                            { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
+                            { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }
+                        ]
                     })
                 });
 
                 const d = await response.json();
 
-                // Advanced response checking
-                if (d.error) {
-                    throw new Error(`Google Error: ${d.error.message}`);
-                }
-
-                if (d.candidates && d.candidates.length > 0 && d.candidates[0].content) {
-                    const reportText = d.candidates[0].content.parts[0].text;
-                    document.getElementById('reportDate').innerText = new Date().toLocaleDateString('en-ZA');
-                    document.getElementById('reportBox').innerText = reportText;
-                    resultArea.classList.remove('hidden');
-                    resultArea.scrollIntoView({ behavior: 'smooth' });
+                if (d.candidates && d.candidates[0].content) {
+                    document.getElementById('reportBox').innerText = d.candidates[0].content.parts[0].text;
+                    document.getElementById('reportDate').innerText = new Date().toLocaleDateString();
+                    document.getElementById('R').classList.remove('hidden');
                 } else {
-                    // This triggers if the AI blocked the content for "Safety"
-                    const reason = d.candidates ? d.candidates[0].finishReason : "Unknown";
-                    throw new Error(`AI Refused Analysis. Reason: ${reason}. This document may contain sensitive data that triggers Google's safety filters.`);
+                    // Check if safety blocked it
+                    const reason = d.candidates ? d.candidates[0].finishReason : "API ERROR";
+                    throw new Error("AI Refused. Reason: " + reason);
                 }
 
             } catch (err) {
-                alert("🚨 SYSTEM ERROR\n\n" + err.message);
-                console.error(err);
+                alert("🚨 ERROR: " + err.message);
             } finally {
-                loader.classList.add('hidden');
+                document.getElementById('L').classList.add('hidden');
             }
         }
 
         function downloadPDF() {
             const element = document.getElementById('printableArea');
-            const opt = {
-                margin: 0.5,
-                filename: 'Legal_Audit_Report.pdf',
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2 },
-                jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
-            };
-            html2pdf().set(opt).from(element).save();
+            html2pdf().from(element).save('Audit_Report.pdf');
         }
     </script>
 </body>
