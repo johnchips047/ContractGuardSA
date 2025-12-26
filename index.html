@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contract Guard SA - Universal</title>
+    <title>Contract Guard SA - Stable</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
 </head>
@@ -16,8 +16,10 @@
             
             <div class="space-y-6">
                 <div class="bg-slate-900 p-4 rounded-xl border border-slate-700 text-center">
-                    <input type="file" id="f" accept="application/pdf" class="text-sm text-slate-400 file:bg-green-600 file:text-white file:border-0 file:px-4 file:py-2 file:rounded-full cursor-pointer">
+                    <label class="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Upload Contract (PDF)</label>
+                    <input type="file" id="f" accept="application/pdf" class="w-full text-sm text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-600 file:text-white hover:file:bg-green-500 cursor-pointer">
                 </div>
+
                 <button onclick="audit()" id="b" class="w-full bg-green-600 hover:bg-green-500 text-white font-bold py-4 rounded-xl shadow-lg transition-all active:scale-95">
                     RUN AI AUDIT
                 </button>
@@ -26,66 +28,86 @@
 
         <div id="L" class="hidden mt-8 text-center">
             <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-green-500 border-t-transparent mb-2"></div>
-            <p class="text-green-500 font-bold">CONNECTING TO AI ENGINE...</p>
+            <p class="text-green-500 font-bold animate-pulse uppercase tracking-widest text-xs">Connecting to Google AI...</p>
         </div>
 
-        <div id="R" class="hidden mt-8 bg-white text-slate-800 p-8 rounded-2xl shadow-2xl">
-            <h2 class="text-xl font-bold border-b border-slate-200 pb-4 mb-4 text-slate-900 text-center">Audit Report</h2>
+        <div id="R" class="hidden mt-8 bg-white text-slate-800 p-8 rounded-2xl shadow-2xl border-t-4 border-green-500">
+            <h2 class="text-xl font-bold border-b border-slate-200 pb-4 mb-4 text-slate-900">Legal Risk Report</h2>
             <div id="reportBox" class="text-sm leading-relaxed whitespace-pre-wrap"></div>
+            <button onclick="window.print()" class="mt-6 w-full py-2 border-2 border-slate-200 rounded-lg text-xs font-bold text-slate-500 hover:bg-slate-50 transition">PRINT/SAVE AS PDF</button>
         </div>
     </div>
 
     <script>
+        // Load PDF engine
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
 
         async function audit() {
-            const file = document.getElementById('f').files[0];
-            if(!file) return alert("Please select a PDF file.");
+            const fileInput = document.getElementById('f');
+            const file = fileInput.files[0];
+            
+            if(!file) return alert("Please select a PDF contract to audit.");
 
-            document.getElementById('L').classList.remove('hidden');
-            document.getElementById('R').classList.add('hidden');
+            const loader = document.getElementById('L');
+            const resultArea = document.getElementById('R');
+            const reportBox = document.getElementById('reportBox');
+
+            loader.classList.remove('hidden');
+            resultArea.classList.add('hidden');
 
             try {
-                const ab = await file.arrayBuffer();
-                const pdf = await pdfjsLib.getDocument(ab).promise;
-                let t = "";
+                // 1. Convert PDF to Text
+                const arrayBuffer = await file.arrayBuffer();
+                const pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
+                let contractText = "";
                 for (let i = 1; i <= pdf.numPages; i++) {
                     const page = await pdf.getPage(i);
                     const content = await page.getTextContent();
-                    t += content.items.map(s => s.str).join(" ");
+                    contractText += content.items.map(s => s.str).join(" ");
                 }
 
-                const k = "AIzaSyCfMGe_T6wFyf9MP-gKIjc02uOyE3YAA6Y";
+                if (contractText.length < 20) throw new Error("Could not extract enough text. Please ensure the PDF is not a scanned image.");
+
+                // 2. Prepare API Connection
+                // NEW KEY INTEGRATED BELOW
+                const k = "AIzaSyDl8odPlnBUilaiYqb2hkZjNSvNbB1mXGU";
                 
-                // Using the most widely supported 'gemini-pro' model name
-                const targetUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${k}`;
+                // Stable Endpoint for Gemini 1.5 Flash
+                const targetUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${k}`;
                 const proxy = "https://corsproxy.io/?";
 
-                const res = await fetch(proxy + encodeURIComponent(targetUrl), {
+                // 3. Request Analysis
+                const response = await fetch(proxy + encodeURIComponent(targetUrl), {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        contents: [{ parts: [{ text: "Audit this South African contract for POPIA and BCEA legal risks. Highlight red flags. Text: " + t }] }]
+                        contents: [{ 
+                            parts: [{ 
+                                text: "You are a South African Legal Expert. Audit the following contract for risks related to POPIA (Privacy) and BCEA (Labour Law). List unfair terms or red flags clearly. Contract text: " + contractText 
+                            }] 
+                        }]
                     })
                 });
 
-                const d = await res.json();
+                const data = await response.json();
 
-                if (d.error) {
-                    throw new Error(`Google Message: ${d.error.message}\nCode: ${d.error.code}`);
+                // 4. Handle Response
+                if (data.error) {
+                    throw new Error(data.error.message);
                 }
 
-                if (d.candidates && d.candidates[0].content) {
-                    document.getElementById('reportBox').innerText = d.candidates[0].content.parts[0].text;
-                    document.getElementById('R').classList.remove('hidden');
+                if (data.candidates && data.candidates[0].content) {
+                    reportBox.innerText = data.candidates[0].content.parts[0].text;
+                    resultArea.classList.remove('hidden');
                 } else {
-                    throw new Error("The AI received the request but didn't return text. This happens if the document is too sensitive or the key is new.");
+                    throw new Error("The AI refused to analyze this content. Check if the PDF contains sensitive blocked material.");
                 }
 
-            } catch (e) {
-                alert("🚨 SYSTEM ERROR\n\n" + e.message);
+            } catch (err) {
+                alert("🚨 SYSTEM ERROR\n\nReason: " + err.message);
+                console.error("Full Debug:", err);
             } finally {
-                document.getElementById('L').classList.add('hidden');
+                loader.classList.add('hidden');
             }
         }
     </script>
