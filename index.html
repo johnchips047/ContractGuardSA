@@ -60,15 +60,17 @@
                 if (t.length < 5) throw new Error("Could not extract text from PDF.");
 
                 const k = "AIzaSyCfMGe_T6wFyf9MP-gKIjc02uOyE3YAA6Y";
-                // FIX: Updated to 'gemini-1.5-flash-latest'
-                const targetUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${k}`;
+                
+                // --- STABLE URL FIX ---
+                // We switched from 'v1beta' to 'v1' and kept 'gemini-1.5-flash'
+                const targetUrl = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${k}`;
                 const proxy = "https://corsproxy.io/?";
 
                 const res = await fetch(proxy + encodeURIComponent(targetUrl), {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        contents: [{ parts: [{ text: "Act as a South African Legal Expert. Audit this contract for POPIA and BCEA risks. Summarize the findings. Text: " + t }] }]
+                        contents: [{ parts: [{ text: "Act as a South African Legal Expert. Audit this contract for POPIA and BCEA risks. Provide a list of red flags. Text: " + t }] }]
                     })
                 });
 
@@ -80,7 +82,7 @@
                     document.getElementById('reportBox').innerText = d.candidates[0].content.parts[0].text;
                     document.getElementById('R').classList.remove('hidden');
                 } else {
-                    throw new Error("AI responded but structure was invalid.");
+                    throw new Error("AI responded but the output was blocked. Try a different document.");
                 }
 
             } catch (e) {
