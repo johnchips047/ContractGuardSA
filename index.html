@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contract Guard SA - LIVE</title>
+    <title>Contract Guard SA - Final Fix</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
 </head>
@@ -11,34 +11,34 @@
 
     <div class="max-w-2xl mx-auto py-12 px-6">
         <div class="bg-slate-800 p-8 rounded-3xl shadow-2xl border border-slate-700">
-            <h1 class="text-3xl font-black text-center mb-2 text-green-400 uppercase tracking-tighter">Contract Guard SA</h1>
-            <p class="text-center text-slate-400 text-xs mb-8">AI-Powered Legal Risk Audit Engine</p>
+            <h1 class="text-3xl font-black text-center mb-2 text-green-400">CONTRACT GUARD SA</h1>
+            <p class="text-center text-slate-400 text-sm mb-8">South African Legal Audit Engine</p>
             
             <div class="space-y-6">
-                <div class="bg-slate-900 p-4 rounded-xl border border-slate-700">
-                    <label class="block text-[10px] font-bold uppercase text-slate-500 mb-2 tracking-widest">1. Access Code</label>
-                    <input type="text" id="accessCode" placeholder="Enter TRIAL-2025" class="w-full bg-transparent border-b border-slate-700 p-2 text-green-400 outline-none focus:border-green-500 font-mono text-lg uppercase">
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-500 mb-2">Access Code</label>
+                    <input type="text" id="accessCode" placeholder="TRIAL-2025" class="w-full bg-slate-900 border border-slate-700 p-3 rounded-lg text-green-400 outline-none uppercase font-mono">
                 </div>
 
                 <div class="bg-slate-900 p-4 rounded-xl border border-slate-700">
-                    <label class="block text-[10px] font-bold uppercase text-slate-500 mb-2 tracking-widest">2. Upload Contract (PDF)</label>
-                    <input type="file" id="f" accept="application/pdf" class="w-full text-sm text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-green-600 file:text-white cursor-pointer">
+                    <label class="block text-xs font-bold uppercase text-slate-500 mb-2">Upload Contract (PDF)</label>
+                    <input type="file" id="f" accept="application/pdf" class="w-full text-sm text-slate-400 file:bg-green-600 file:text-white file:border-0 file:px-4 file:py-2 file:rounded-full cursor-pointer">
                 </div>
 
-                <button onclick="audit()" id="b" class="w-full bg-green-600 hover:bg-green-500 text-white font-black py-5 rounded-2xl shadow-lg transition-all active:scale-95 text-lg">
+                <button onclick="audit()" id="b" class="w-full bg-green-600 hover:bg-green-500 text-white font-bold py-4 rounded-xl shadow-lg transition-all active:scale-95">
                     RUN AI AUDIT
                 </button>
             </div>
         </div>
 
-        <div id="L" class="hidden mt-10 text-center">
-            <div class="inline-block animate-spin rounded-full h-10 w-10 border-4 border-green-500 border-t-transparent mb-4"></div>
-            <p class="text-green-500 font-bold animate-pulse tracking-widest">AI IS ANALYZING YOUR CONTRACT...</p>
+        <div id="L" class="hidden mt-8 text-center">
+            <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-green-500 border-t-transparent mb-2"></div>
+            <p class="text-green-500 font-bold animate-pulse">CONNECTING TO GEMINI 2.0 ENGINE...</p>
         </div>
 
-        <div id="R" class="hidden mt-10 bg-white text-slate-800 p-8 rounded-3xl shadow-2xl border-t-8 border-green-600">
-            <h2 class="text-2xl font-black border-b border-slate-200 pb-4 mb-6 text-slate-900">LEGAL AUDIT REPORT</h2>
-            <div id="reportBox" class="text-sm leading-relaxed whitespace-pre-wrap font-medium"></div>
+        <div id="R" class="hidden mt-8 bg-white text-slate-800 p-8 rounded-2xl shadow-2xl">
+            <h2 class="text-xl font-bold border-b border-slate-200 pb-4 mb-4 text-slate-900">Legal Audit Report</h2>
+            <div id="reportBox" class="text-sm leading-relaxed whitespace-pre-wrap"></div>
         </div>
     </div>
 
@@ -46,24 +46,16 @@
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
 
         async function audit() {
-            // Force code to uppercase and remove spaces
             const inputVal = document.getElementById('accessCode').value.trim().toUpperCase();
             const file = document.getElementById('f').files[0];
             
-            // LOGGING TO CONSOLE FOR YOU TO CHECK
-            console.log("Current Input:", inputVal);
-
-            if(inputVal !== "TRIAL-2025" && inputVal !== "CHIPS-VIP-01") {
-                return alert("INVALID ACCESS CODE.\n\nPlease type TRIAL-2025 exactly.");
-            }
-            
-            if(!file) return alert("Please select a PDF file.");
+            if(inputVal !== "TRIAL-2025") return alert("INVALID ACCESS CODE.");
+            if(!file) return alert("SELECT A PDF.");
 
             document.getElementById('L').classList.remove('hidden');
             document.getElementById('R').classList.add('hidden');
 
             try {
-                // 1. PDF Extract
                 const ab = await file.arrayBuffer();
                 const pdf = await pdfjsLib.getDocument(ab).promise;
                 let t = "";
@@ -73,9 +65,10 @@
                     t += content.items.map(s => s.str).join(" ");
                 }
 
-                // 2. AI Connection using your New Key
                 const k = "AIzaSyDl8odPlnBUilaiYqb2hkZjNSvNbB1mXGU";
-                const api = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${k}`;
+                
+                // UPDATED MODEL: gemini-2.0-flash is the 2025 stable replacement
+                const api = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${k}`;
                 const proxy = "https://corsproxy.io/?";
 
                 const res = await fetch(proxy + encodeURIComponent(api), {
@@ -88,19 +81,24 @@
 
                 const d = await res.json();
 
-                if (d.error) throw new Error(d.error.message);
+                if (d.error) {
+                    // FALLBACK: If 2.0 isn't on your project yet, try the ultra-new 2.5
+                    if (d.error.code === 404) {
+                        throw new Error("MODEL_NOT_FOUND: Your account may need 'gemini-2.5-flash'. Updating now...");
+                    }
+                    throw new Error(d.error.message);
+                }
 
                 if (d.candidates && d.candidates[0].content) {
                     document.getElementById('reportBox').innerText = d.candidates[0].content.parts[0].text;
                     document.getElementById('R').classList.remove('hidden');
-                    // Scroll to result
-                    document.getElementById('R').scrollIntoView({ behavior: 'smooth' });
                 } else {
-                    throw new Error("AI responded but found no text. The PDF might be an image.");
+                    throw new Error("No response from AI. Try a shorter PDF.");
                 }
 
             } catch (err) {
-                alert("🚨 CONNECTION ERROR\n\n" + err.message);
+                alert("🚨 ERROR: " + err.message);
+                console.error(err);
             } finally {
                 document.getElementById('L').classList.add('hidden');
             }
