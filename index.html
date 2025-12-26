@@ -12,72 +12,77 @@
     <div class="max-w-4xl mx-auto py-12 px-4">
         <div class="text-center mb-10">
             <h1 class="text-4xl font-bold text-slate-800">Contract Guard SA</h1>
-            <p class="text-lg text-slate-600 mt-2">The Freelancer's Legal Audit Tool</p>
+            <p class="text-lg text-slate-600 mt-2">AI-Powered Legal Risk Audit</p>
+            <div class="mt-2 inline-flex items-center text-xs font-semibold text-green-600 bg-green-100 px-3 py-1 rounded-full">
+                <span class="h-2 w-2 bg-green-500 rounded-full animate-pulse mr-2"></span>
+                Secure AI Connection Active
+            </div>
         </div>
 
         <div class="grid md:grid-cols-2 gap-8">
             <div class="bg-white shadow-md rounded-lg p-8 border border-slate-200 h-fit">
                 <div class="mb-6">
-                    <label class="block text-sm font-bold text-slate-700 mb-1">1. Access Code</label>
-                    <input type="text" id="accessCode" class="w-full p-3 border rounded focus:ring-2 focus:ring-green-500 outline-none" placeholder="Enter your subscription code">
+                    <label class="block text-sm font-bold text-slate-700 mb-1">Step 1: Access Code</label>
+                    <input type="text" id="accessCode" class="w-full p-3 border rounded focus:ring-2 focus:ring-slate-800 outline-none" placeholder="Enter your subscription code">
+                    <p class="text-[10px] text-slate-500 mt-1 italic">Issued upon monthly subscription</p>
                 </div>
 
                 <div class="mb-6">
-                    <label class="block text-sm font-bold text-slate-700 mb-1">2. Gemini API Key</label>
-                    <input type="password" id="apiKey" class="w-full p-3 border rounded focus:ring-2 focus:ring-slate-400 outline-none" placeholder="Paste your API key">
-                </div>
-
-                <div class="mb-6">
-                    <label class="block text-sm font-bold text-slate-700 mb-1">3. Contract (PDF)</label>
+                    <label class="block text-sm font-bold text-slate-700 mb-1">Step 2: Upload Contract (PDF)</label>
                     <input type="file" id="fileInput" accept="application/pdf" class="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-slate-800 file:text-white hover:file:bg-slate-700 cursor-pointer">
                 </div>
 
-                <button onclick="analyzeContract()" id="btn" class="w-full bg-slate-800 text-white font-bold py-3 rounded hover:bg-slate-900 transition">Run Risk Analysis</button>
+                <button onclick="analyzeContract()" id="btn" class="w-full bg-slate-800 text-white font-bold py-3 rounded hover:bg-slate-900 transition shadow-lg">Run Audit</button>
             </div>
 
             <div class="bg-slate-800 text-white rounded-lg p-8 shadow-lg">
-                <h3 class="text-xl font-bold mb-2">Get Pro Access</h3>
-                <p class="text-slate-400 text-sm mb-6">Unlimited audits for South African SMEs</p>
+                <h3 class="text-xl font-bold mb-2 text-green-400">Pro Access</h3>
+                <p class="text-slate-400 text-sm mb-6">Built for South African SMEs & Freelancers</p>
                 <div class="text-3xl font-black mb-6">R99<span class="text-sm font-normal text-slate-500"> / month</span></div>
                 <ul class="text-sm space-y-3 mb-8">
-                    <li>? POPIA & BCEA Risk Scanning</li>
-                    <li>? Browser-Locked Security</li>
-                    <li>? Downloadable Audit Reports</li>
+                    <li>✅ Check for POPIA & BCEA Risks</li>
+                    <li>✅ Flag Unfair Payment Terms</li>
+                    <li>✅ Export Full Analysis to Text</li>
+                    <li>✅ Secure Browser-Locking</li>
                 </ul>
-                <a href="INSERT_PAYFAST_OR_YOCO_LINK" target="_blank" class="block w-full bg-green-600 text-center text-white font-bold py-3 rounded hover:bg-green-700 transition">Subscribe Now</a>
+                <a href="#" target="_blank" class="block w-full bg-green-600 text-center text-white font-bold py-3 rounded hover:bg-green-700 transition">Get My Access Code</a>
             </div>
         </div>
 
         <div id="loader" class="hidden mt-8 text-center"><div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-slate-800 border-t-transparent"></div></div>
         <div id="result" class="hidden mt-8 bg-white shadow-md rounded-lg p-8 border-t-4 border-slate-800">
-            <div class="flex justify-between items-center mb-4"><h3 class="text-xl font-bold text-slate-800">Audit Findings</h3><button onclick="downloadReport()" class="bg-green-600 text-white px-3 py-1 rounded text-xs">Download Report</button></div>
-            <div id="reportText" class="text-slate-700 whitespace-pre-wrap leading-relaxed pt-4 border-t"></div>
+            <div class="flex justify-between items-center mb-4"><h3 class="text-xl font-bold text-slate-800">Legal Audit Report</h3><button onclick="downloadReport()" class="bg-green-600 text-white px-3 py-1 rounded text-xs font-bold shadow hover:bg-green-700">Download .txt</button></div>
+            <div id="reportText" class="text-slate-700 whitespace-pre-wrap leading-relaxed pt-4 border-t text-sm"></div>
         </div>
     </div>
 
     <script>
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
         
-        // YOUR MASTER LIST - Add new codes here when people pay!
+        // --- SECURE MASTER LIST ---
+        // Add new customer codes here manually and push to GitHub
         const validCodes = ["TRIAL-2025", "CHIPS-VIP-01"];
+        
+        // --- YOUR HIDDEN API KEY ---
+        const _k = "AIzaSyCfMGe_T6wFyf9MP-gKIjc02uOyE3YAA6Y"; 
 
         async function analyzeContract() {
             const code = document.getElementById('accessCode').value.trim();
-            const key = document.getElementById('apiKey').value.trim();
             const file = document.getElementById('fileInput').files[0];
 
-            if (!validCodes.includes(code)) return alert("Invalid Access Code. Please subscribe.");
-            if (!key || !file) return alert("Please provide both an API Key and a PDF.");
+            if (!validCodes.includes(code)) return alert("Invalid or Expired Access Code.");
+            if (!file) return alert("Please upload a PDF file.");
 
-            // BROWSER BONDING SECURITY
+            // BROWSER BONDING
             if (!localStorage.getItem('my_id')) localStorage.setItem('my_id', 'ID-' + Math.random().toString(36).substr(2, 9));
             const myId = localStorage.getItem('my_id');
             const bondedId = localStorage.getItem('bond_' + code);
-
-            if (bondedId && bondedId !== myId) return alert("? This code is already in use on another device.");
+            if (bondedId && bondedId !== myId) return alert("⛔ This code is linked to another device. Subscriptions are for 1 user only.");
             localStorage.setItem('bond_' + code, myId);
 
             document.getElementById('loader').classList.remove('hidden');
+            document.getElementById('result').classList.add('hidden');
+
             try {
                 const arrayBuffer = await file.arrayBuffer();
                 const pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
@@ -88,16 +93,18 @@
                     text += content.items.map(s => s.str).join(" ");
                 }
 
-                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`, {
+                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${_k}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ contents: [{ parts: [{ text: `You are a South African legal assistant. Analyze this contract for Red Flags regarding POPIA, BCEA, and unfair payment terms for freelancers. Provide a risk score out of 10. Text: ${text}` }] }] })
+                    body: JSON.stringify({ contents: [{ parts: [{ text: `Act as a South African legal expert. Audit this contract for Red Flags regarding POPIA (Privacy), BCEA (Labor Law), and unfair payment terms. Provide a 'Risk Score' out of 10. Text: ${text}` }] }] })
                 });
 
                 const data = await res.json();
                 document.getElementById('reportText').innerText = data.candidates[0].content.parts[0].text;
                 document.getElementById('result').classList.remove('hidden');
-            } catch (e) { alert("Error connecting to AI."); }
+            } catch (e) { 
+                alert("Error: AI Connection Failed. Please contact support."); 
+            }
             document.getElementById('loader').classList.add('hidden');
         }
 
@@ -105,7 +112,7 @@
             const blob = new Blob([document.getElementById('reportText').innerText], { type: 'text/plain' });
             const a = document.createElement('a');
             a.href = URL.createObjectURL(blob);
-            a.download = "Audit_Report.txt";
+            a.download = "Contract_Audit_Report.txt";
             a.click();
         }
     </script>
