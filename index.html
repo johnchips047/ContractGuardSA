@@ -6,11 +6,10 @@
     <title>Contract Guard SA | Legal AI</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
         body { font-family: 'Inter', sans-serif; background-color: #020617; }
-        #box { white-space: pre-wrap; word-wrap: break-word; }
     </style>
 </head>
 <body class="text-slate-200 min-h-screen">
@@ -18,7 +17,7 @@
     <nav class="border-b border-slate-800 bg-slate-900/50 p-4 sticky top-0 z-50 backdrop-blur-md">
         <div class="max-w-3xl mx-auto flex justify-between items-center">
             <span class="font-black text-white tracking-tighter text-xl uppercase">Contract Guard <span class="text-green-500">SA</span></span>
-            <span class="text-[10px] font-bold bg-green-500/10 text-green-500 px-3 py-1 rounded-full border border-green-500/20">GEMINI 2.5 ENGINE</span>
+            <span class="text-[10px] font-bold bg-green-500/10 text-green-500 px-3 py-1 rounded-full border border-green-500/20">2.5 FLASH ENGINE</span>
         </div>
     </nav>
 
@@ -26,7 +25,7 @@
         <div class="bg-slate-900 border border-slate-800 p-8 rounded-3xl shadow-2xl">
             <div class="space-y-6">
                 <div>
-                    <label class="block text-xs font-bold uppercase text-slate-500 mb-2 ml-1 text-left">Access Code</label>
+                    <label class="block text-xs font-bold uppercase text-slate-500 mb-2 ml-1">Access Code</label>
                     <input type="text" id="accessCode" placeholder="TRIAL-2025" class="w-full bg-slate-950 border border-slate-800 p-4 rounded-xl text-green-400 outline-none focus:border-green-500 transition-all font-mono uppercase">
                 </div>
                 
@@ -34,34 +33,35 @@
                     <input type="file" id="f" accept="application/pdf" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
                     <div class="text-slate-500">
                         <span class="text-3xl block mb-2">📄</span>
-                        <p class="text-sm font-bold" id="fn">Upload SA Contract PDF</p>
+                        <p class="text-sm font-bold" id="fn">Upload Contract for Audit</p>
                     </div>
                 </div>
 
-                <button onclick="audit()" class="w-full bg-green-600 hover:bg-green-500 text-slate-950 font-black py-4 rounded-xl transition-all uppercase text-lg shadow-xl shadow-green-900/20">Run 2.5 Audit</button>
+                <button onclick="audit()" class="w-full bg-green-600 hover:bg-green-500 text-slate-950 font-black py-4 rounded-xl transition-all uppercase text-lg shadow-xl shadow-green-900/20">Run Audit</button>
             </div>
         </div>
 
         <div id="L" class="hidden mt-10 text-center">
             <div class="inline-block animate-spin rounded-full h-10 w-10 border-4 border-green-500 border-t-transparent mb-4"></div>
-            <p class="text-green-500 font-black tracking-widest text-xs animate-pulse">2.5 ENGINE IS ANALYZING TEXT...</p>
+            <p class="text-green-500 font-black tracking-widest text-xs">ANALYZING POPIA & BCEA COMPLIANCE...</p>
         </div>
 
-        <div id="R" class="hidden mt-10 bg-white text-slate-900 p-10 rounded-3xl shadow-2xl relative overflow-hidden">
+        <div id="R" class="hidden mt-10 bg-white text-slate-900 p-10 rounded-3xl shadow-2xl relative">
             <div class="absolute top-0 left-0 w-full h-2 bg-green-500"></div>
             <div id="printArea">
-                <h2 class="text-2xl font-black uppercase tracking-tighter border-b pb-4 mb-6">Legal Risk Report</h2>
-                <div id="box" class="text-sm leading-relaxed font-medium text-slate-800 min-h-[100px]"></div>
+                <h2 class="text-2xl font-black uppercase border-b pb-4 mb-6 text-slate-950">Audit Report</h2>
+                <div id="box" class="text-sm leading-relaxed whitespace-pre-wrap font-medium text-slate-800"></div>
             </div>
-            
-            <button id="dlBtn" onclick="save()" class="mt-8 w-full bg-slate-900 text-white py-4 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-black transition-all">
+            <button id="dlBtn" onclick="save()" class="mt-8 w-full bg-slate-900 text-white py-4 rounded-xl font-bold flex items-center justify-center gap-2">
                 📥 DOWNLOAD PDF REPORT
             </button>
         </div>
     </main>
 
     <script>
+        const { jsPDF } = window.jspdf;
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+
         document.getElementById('f').onchange = e => document.getElementById('fn').innerText = e.target.files[0].name;
 
         async function audit() {
@@ -93,16 +93,14 @@
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        contents: [{ parts: [{ text: "Act as a South African Legal Expert. Provide a detailed risk audit for POPIA and BCEA compliance based on this text. Use bullet points: " + t }] }],
-                        safetySettings: [{ category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" }]
+                        contents: [{ parts: [{ text: "Act as a South African Legal Expert. Provide a detailed risk audit for POPIA and BCEA compliance. List red flags in clear bullet points: " + t }] }]
                     })
                 });
 
                 const d = await res.json();
                 if (d.candidates && d.candidates[0].content) {
-                    const finalOutput = d.candidates[0].content.parts[0].text;
-                    // Injection
-                    document.getElementById('box').innerText = finalOutput;
+                    const output = d.candidates[0].content.parts[0].text;
+                    document.getElementById('box').innerText = output;
                     result.classList.remove('hidden');
                     result.scrollIntoView({ behavior: 'smooth' });
                 }
@@ -113,43 +111,43 @@
             }
         }
 
-        /**
-         * UPDATED SAVE FUNCTION
-         * Fixes 'Empty PDF' by passing HTML string rather than an element reference
-         * that might be mid-render.
-         */
+        // --- THE THINK-AHEAD FIX ---
         function save() {
+            const doc = new jsPDF();
             const content = document.getElementById('box').innerText;
             const btn = document.getElementById('dlBtn');
-            btn.innerText = "⏳ GENERATING...";
-            btn.disabled = true;
+            
+            btn.innerText = "WRITING PDF...";
+            
+            // 1. Set Title
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(18);
+            doc.text("LEGAL COMPLIANCE AUDIT", 20, 20);
+            
+            doc.setFontSize(10);
+            doc.setTextColor(100);
+            doc.text("GENERATED BY CONTRACT GUARD SA - SOUTH AFRICA 2025", 20, 28);
+            doc.line(20, 32, 190, 32);
 
-            // Create a clean HTML template for the PDF
-            const pdfTemplate = `
-                <div style="font-family: Arial, sans-serif; padding: 40px; color: #333;">
-                    <h1 style="border-bottom: 2px solid #22c55e; padding-bottom: 10px; margin-bottom: 20px;">
-                        LEGAL COMPLIANCE AUDIT
-                    </h1>
-                    <p style="font-size: 10px; color: #666; text-transform: uppercase;">Generated by Contract Guard SA</p>
-                    <div style="white-space: pre-wrap; font-size: 12px; line-height: 1.6; margin-top: 30px;">
-                        ${content}
-                    </div>
-                </div>
-            `;
+            // 2. Set Content (Auto-wrapped and paginated)
+            doc.setFont("helvetica", "normal");
+            doc.setFontSize(11);
+            doc.setTextColor(0);
+            
+            const splitText = doc.splitTextToSize(content, 170);
+            let y = 40;
 
-            const opt = {
-                margin: 0.5,
-                filename: 'Contract_Audit_Report.pdf',
-                image: { type: 'jpeg', quality: 1 },
-                html2canvas: { scale: 2, logging: false, useCORS: true },
-                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-            };
-
-            // Capture from the template string rather than the live DOM element
-            html2pdf().set(opt).from(pdfTemplate).save().then(() => {
-                btn.innerText = "📥 DOWNLOAD PDF REPORT";
-                btn.disabled = false;
+            splitText.forEach(line => {
+                if (y > 280) { // If near bottom of page
+                    doc.addPage();
+                    y = 20; // Reset Y for new page
+                }
+                doc.text(line, 20, y);
+                y += 6; // Line height
             });
+
+            doc.save('Legal_Audit_Report.pdf');
+            btn.innerText = "📥 DOWNLOAD PDF REPORT";
         }
     </script>
 </body>
