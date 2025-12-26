@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contract Guard SA - Stable</title>
+    <title>Contract Guard SA - Universal</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
 </head>
@@ -15,11 +15,9 @@
             <p class="text-center text-slate-400 text-sm mb-8">South African Legal Audit Engine</p>
             
             <div class="space-y-6">
-                <div class="bg-slate-900 p-4 rounded-xl border border-slate-700">
-                    <label class="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Upload Contract (PDF)</label>
-                    <input type="file" id="f" accept="application/pdf" class="w-full text-sm text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-600 file:text-white hover:file:bg-green-500">
+                <div class="bg-slate-900 p-4 rounded-xl border border-slate-700 text-center">
+                    <input type="file" id="f" accept="application/pdf" class="text-sm text-slate-400 file:bg-green-600 file:text-white file:border-0 file:px-4 file:py-2 file:rounded-full cursor-pointer">
                 </div>
-
                 <button onclick="audit()" id="b" class="w-full bg-green-600 hover:bg-green-500 text-white font-bold py-4 rounded-xl shadow-lg transition-all active:scale-95">
                     RUN AI AUDIT
                 </button>
@@ -28,11 +26,11 @@
 
         <div id="L" class="hidden mt-8 text-center">
             <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-green-500 border-t-transparent mb-2"></div>
-            <p class="text-green-500 font-bold animate-pulse">ANALYZING CONTRACT...</p>
+            <p class="text-green-500 font-bold">CONNECTING TO AI ENGINE...</p>
         </div>
 
         <div id="R" class="hidden mt-8 bg-white text-slate-800 p-8 rounded-2xl shadow-2xl">
-            <h2 class="text-xl font-bold border-b border-slate-200 pb-4 mb-4 text-slate-900">Legal Audit Report</h2>
+            <h2 class="text-xl font-bold border-b border-slate-200 pb-4 mb-4 text-slate-900 text-center">Audit Report</h2>
             <div id="reportBox" class="text-sm leading-relaxed whitespace-pre-wrap"></div>
         </div>
     </div>
@@ -57,36 +55,35 @@
                     t += content.items.map(s => s.str).join(" ");
                 }
 
-                if (t.length < 5) throw new Error("Could not extract text from PDF.");
-
                 const k = "AIzaSyCfMGe_T6wFyf9MP-gKIjc02uOyE3YAA6Y";
                 
-                // --- STABLE URL FIX ---
-                // We switched from 'v1beta' to 'v1' and kept 'gemini-1.5-flash'
-                const targetUrl = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${k}`;
+                // Using the most widely supported 'gemini-pro' model name
+                const targetUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${k}`;
                 const proxy = "https://corsproxy.io/?";
 
                 const res = await fetch(proxy + encodeURIComponent(targetUrl), {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        contents: [{ parts: [{ text: "Act as a South African Legal Expert. Audit this contract for POPIA and BCEA risks. Provide a list of red flags. Text: " + t }] }]
+                        contents: [{ parts: [{ text: "Audit this South African contract for POPIA and BCEA legal risks. Highlight red flags. Text: " + t }] }]
                     })
                 });
 
                 const d = await res.json();
 
-                if (d.error) throw new Error(d.error.message);
+                if (d.error) {
+                    throw new Error(`Google Message: ${d.error.message}\nCode: ${d.error.code}`);
+                }
 
                 if (d.candidates && d.candidates[0].content) {
                     document.getElementById('reportBox').innerText = d.candidates[0].content.parts[0].text;
                     document.getElementById('R').classList.remove('hidden');
                 } else {
-                    throw new Error("AI responded but the output was blocked. Try a different document.");
+                    throw new Error("The AI received the request but didn't return text. This happens if the document is too sensitive or the key is new.");
                 }
 
             } catch (e) {
-                alert("🚨 SYSTEM ERROR: " + e.message);
+                alert("🚨 SYSTEM ERROR\n\n" + e.message);
             } finally {
                 document.getElementById('L').classList.add('hidden');
             }
