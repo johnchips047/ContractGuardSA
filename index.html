@@ -3,96 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contract Guard SA - LIVE</title>
+    <title>DEBUG MODE - Contract Guard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
 </head>
-<body class="bg-gray-900 text-white font-sans">
-
-    <div class="max-w-2xl mx-auto py-20 px-6">
-        <div class="bg-gray-800 p-8 rounded-2xl shadow-2xl border border-gray-700">
-            <h1 class="text-3xl font-bold text-center mb-8 text-green-400">Contract Guard SA</h1>
-            
-            <div class="space-y-6">
-                <div>
-                    <label class="block text-sm font-medium mb-2 text-gray-400">1. ENTER CODE: (Type "GO")</label>
-                    <input type="text" id="pass" class="w-full bg-gray-900 border border-gray-600 p-4 rounded-xl text-xl font-bold tracking-widest text-center focus:border-green-500 outline-none uppercase">
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium mb-2 text-gray-400">2. UPLOAD PDF</label>
-                    <input type="file" id="pdf" accept="application/pdf" class="w-full text-gray-400">
-                </div>
-
-                <button onclick="run()" id="btn" class="w-full bg-green-600 hover:bg-green-500 text-white font-black py-5 rounded-xl text-lg shadow-lg transform transition active:scale-95">
-                    RUN RISK ANALYSIS
-                </button>
-            </div>
+<body class="bg-red-50 font-sans">
+    <div class="max-w-xl mx-auto py-20 px-4 text-center">
+        <h1 class="text-2xl font-bold text-red-600 mb-4 italic">🔧 DEBUG MODE: NO PASSWORD REQUIRED</h1>
+        
+        <div class="bg-white p-8 rounded-xl shadow-lg border-2 border-red-200">
+            <input type="file" id="f" accept="application/pdf" class="mb-4 block w-full text-sm">
+            <button onclick="audit()" id="b" class="w-full bg-red-600 text-white font-bold py-4 rounded-lg">TEST AI NOW</button>
         </div>
 
-        <div id="loading" class="hidden mt-10 text-center animate-pulse text-green-400 font-bold text-xl">
-            SCANNING FOR POPIA & BCEA RISKS...
-        </div>
-
-        <div id="output" class="hidden mt-10 bg-white text-gray-900 p-8 rounded-2xl shadow-inner leading-relaxed">
-            <h2 class="text-xl font-bold border-b pb-4 mb-4">AUDIT REPORT</h2>
-            <div id="text" class="text-sm"></div>
-        </div>
+        <div id="L" class="hidden mt-4 animate-bounce text-red-600 font-bold">AI IS THINKING...</div>
+        <div id="R" class="hidden mt-8 text-left bg-white p-6 rounded shadow border text-sm whitespace-pre-wrap"></div>
     </div>
 
     <script>
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
 
-        async function run() {
-            const codeInput = document.getElementById('pass').value.trim().toUpperCase();
-            const fileInput = document.getElementById('pdf').files[0];
+        async function audit() {
+            const file = document.getElementById('f').files[0];
+            if(!file) return alert("Select a PDF!");
 
-            // SIMPLEST CHECK POSSIBLE
-            if (codeInput !== "GO") {
-                alert("Please type 'GO' in the access box.");
-                return;
-            }
-
-            if (!fileInput) {
-                alert("Please select a PDF file first.");
-                return;
-            }
-
-            document.getElementById('loading').classList.remove('hidden');
-            document.getElementById('output').classList.add('hidden');
+            document.getElementById('L').classList.remove('hidden');
+            document.getElementById('R').classList.add('hidden');
 
             try {
-                const arrayBuffer = await fileInput.arrayBuffer();
-                const pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
-                let contractText = "";
+                const ab = await file.arrayBuffer();
+                const pdf = await pdfjsLib.getDocument(ab).promise;
+                let t = "";
                 for (let i = 1; i <= pdf.numPages; i++) {
                     const page = await pdf.getPage(i);
                     const content = await page.getTextContent();
-                    contractText += content.items.map(s => s.str).join(" ");
+                    t += content.items.map(s => s.str).join(" ");
                 }
 
-                const key = "AIzaSyCfMGe_T6wFyf9MP-gKIjc02uOyE3YAA6Y";
-                const proxy = "https://corsproxy.io/?";
-                const api = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`;
+                const k = "AIzaSyCfMGe_T6wFyf9MP-gKIjc02uOyE3YAA6Y";
+                const api = `https://corsproxy.io/?${encodeURIComponent("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + k)}`;
 
-                const response = await fetch(proxy + encodeURIComponent(api), {
+                const res = await fetch(api, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        contents: [{ parts: [{ text: "You are a SA Legal bot. Audit this for POPIA, BCEA, and payment risks. Be brief. Contract: " + contractText }] }]
-                    })
+                    body: JSON.stringify({ contents: [{ parts: [{ text: "Briefly audit this SA contract for risk: " + t }] }] })
                 });
 
-                const data = await response.json();
-                if (data.error) throw new Error(data.error.message);
-
-                document.getElementById('text').innerText = data.candidates[0].content.parts[0].text;
-                document.getElementById('output').classList.remove('hidden');
-            } catch (err) {
-                alert("Error: " + err.message);
-            } finally {
-                document.getElementById('loading').classList.add('hidden');
+                const d = await res.json();
+                document.getElementById('R').innerText = d.candidates[0].content.parts[0].text;
+                document.getElementById('R').classList.remove('hidden');
+            } catch (e) {
+                alert("Error: " + e.message);
             }
+            document.getElementById('L').classList.add('hidden');
         }
     </script>
 </body>
